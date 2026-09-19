@@ -56,7 +56,7 @@ def best_move(board: list, ai_symbol: str) -> int:
     return move
 
 
-def render_keyboard(board: list, game_over: bool = False) -> InlineKeyboardMarkup:
+def render_keyboard(board: list, game_over: bool = False, rematch_label: str = "\U0001F504 Rematch") -> InlineKeyboardMarkup:
     rows = []
     for r in range(3):
         row = []
@@ -65,5 +65,5 @@ def render_keyboard(board: list, game_over: bool = False) -> InlineKeyboardMarku
             row.append(InlineKeyboardButton(SYMBOLS[board[i]], callback_data=f"ttt:{i}"))
         rows.append(row)
     if game_over:
-        rows.append([InlineKeyboardButton("\U0001F504 Rematch", callback_data="ttt:restart")])
+        rows.append([InlineKeyboardButton(rematch_label, callback_data="ttt:restart")])
     return InlineKeyboardMarkup(rows)

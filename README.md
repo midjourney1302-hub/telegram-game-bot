@@ -69,6 +69,20 @@ to start a game.
 - `tictactoe.py` — pure game logic: win detection, unbeatable AI, board rendering
 - `game_store.py` — in-memory tracking of active games (resets on restart)
 
+## Language
+
+The first time someone messages the bot, it asks them to pick English,
+Russian, or Uzbek (buttons, no typing needed). That choice is remembered
+per user and used for the `/start` message and for any tic-tac-toe game
+they start (whoever starts a game sets the language for that game's board
+text, even if the other player has a different language set). `/language`
+lets anyone change their choice later.
+
+Add another language by adding an entry to `TRANSLATIONS` and `LANGUAGES`
+in `translations.py` — every other language falls back to English for any
+key it doesn't define, so you can add a language with just the strings you
+have translated so far.
+
 ## Adding more games
 
 `tictactoe.py` is a template for the pattern: pure game logic + a

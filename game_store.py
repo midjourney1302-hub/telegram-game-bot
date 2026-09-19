@@ -8,12 +8,14 @@ tradeoff as the chat history in bot.py; swap for Redis/DB if that matters.
 _games: dict = {}
 
 
-def create(inline_message_id: str, mode: str, starter) -> dict:
+def create(inline_message_id: str, mode: str, starter, lang: str = "en") -> dict:
     """mode is 'friend' or 'bot'. starter is the Telegram user who invoked it,
-    and always plays X."""
+    and always plays X. lang is the board text's language for this game's
+    whole lifetime (based on whoever started it)."""
     game = {
         "board": [None] * 9,
         "mode": mode,
+        "lang": lang,
         "x_id": starter.id,
         "x_name": starter.first_name,
         "o_id": None if mode == "friend" else "BOT",

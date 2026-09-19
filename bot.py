@@ -11,6 +11,8 @@ import logging
 import uuid
 
 from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
     InlineQueryResultArticle,
     InputTextMessageContent,
     Update,
@@ -26,7 +28,9 @@ from telegram.ext import (
 
 import config
 import game_store
+import lang_store
 import tictactoe
+from translations import LANGUAGES, t
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -34,17 +38,40 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _language_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        [[InlineKeyboardButton(label, callback_data=f"lang:{code}")] for code, label in LANGUAGES]
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Commands
 # --------------------------------------------------------------------------- #
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Hey! I'm a games bot.\n\n"
-        "Type my username (@" + context.bot.username + ") in *any* chat \u2014 "
-        "even a DM with a friend \u2014 to start a game of tic-tac-toe, "
-        "vs them or vs an unbeatable bot.",
-        parse_mode="Markdown",
+    user_id = update.effective_user.id
+    if lang_store.has(user_id):
+        lang = lang_store.get(user_id)
+        await update.message.reply_text(
+            t(lang, "welcome", username=context.bot.username), parse_mode="Markdown"
+        )
+    else:
+        await update.message.reply_text(
+            t("en", "choose_language"), reply_markup=_language_keyboard()
+        )
+
+
+async def language_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(t("en", "choose_language"), reply_markup=_language_keyboard())
+
+
+async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    lang = query.data.split(":")[1]
+    lang_store.set(query.from_user.id, lang)
+    await query.answer()
+    await query.edit_message_text(
+        t(lang, "welcome", username=context.bot.username), parse_mode="Markdown"
     )
 
 
@@ -54,20 +81,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def _ttt_text(game: dict) -> str:
     board = game["board"]
+    lang = game["lang"]
     result, _ = tictactoe.winner(board)
     header = f"\u274C {game['x_name']}  vs  \u2B55 {game['o_name'] or '(open)'}"
 
     if result == "draw":
-        body = "\U0001F91D It's a draw! Tap Rematch to play again."
+        body = t(lang, "draw")
     elif result in ("X", "O"):
         champ = game["x_name"] if result == "X" else game["o_name"]
-        body = f"\U0001F3C6 {champ} wins! Tap Rematch to play again."
+        body = t(lang, "win", name=champ)
     elif game["mode"] == "friend" and game["o_id"] is None:
-        body = "Waiting for someone else in this chat to tap a square and join as O."
+        body = t(lang, "waiting")
     else:
         mover = game["x_name"] if game["turn"] == "X" else game["o_name"]
         symbol = "\u274C" if game["turn"] == "X" else "\u2B55"
-        body = f"{symbol} {mover}'s turn"
+        body = t(lang, "turn", symbol=symbol, name=mover)
 
     return f"{header}\n{body}"
 
@@ -100,7 +128,8 @@ async def chosen_inline_result(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     mode = "friend" if result.result_id.startswith("ttt_friend") else "bot"
-    game = game_store.create(result.inline_message_id, mode, result.from_user)
+    lang = lang_store.get(result.from_user.id)
+    game = game_store.create(result.inline_message_id, mode, result.from_user, lang=lang)
 
     await context.bot.edit_message_text(
         inline_message_id=result.inline_message_id,
@@ -180,7 +209,9 @@ async def ttt_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.edit_message_text(
         inline_message_id=inline_message_id,
         text=_ttt_text(game),
-        reply_markup=tictactoe.render_keyboard(board, game_over=bool(result)),
+        reply_markup=tictactoe.render_keyboard(
+            board, game_over=bool(result), rematch_label=t(game["lang"], "rematch_button")
+        ),
     )
 
 
@@ -195,6 +226,8 @@ def main():
     app = Application.builder().token(config.TELEGRAM_BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("language", language_cmd))
+    app.add_handler(CallbackQueryHandler(language_callback, pattern=r"^lang:"))
     app.add_handler(InlineQueryHandler(inline_query))
     app.add_handler(ChosenInlineResultHandler(chosen_inline_result))
     app.add_handler(CallbackQueryHandler(ttt_callback, pattern=r"^ttt:"))
