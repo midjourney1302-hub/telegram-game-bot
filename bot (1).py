@@ -7,6 +7,7 @@ Run:
     python bot.py
 """
 
+import html
 import logging
 import uuid
 
@@ -53,7 +54,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if lang_store.has(user_id):
         lang = lang_store.get(user_id)
         await update.message.reply_text(
-            t(lang, "welcome", username=context.bot.username), parse_mode="Markdown"
+            t(lang, "welcome", username=html.escape(context.bot.username)),
+            parse_mode="HTML",
         )
     else:
         await update.message.reply_text(
@@ -71,7 +73,8 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang_store.set(query.from_user.id, lang)
     await query.answer()
     await query.edit_message_text(
-        t(lang, "welcome", username=context.bot.username), parse_mode="Markdown"
+        t(lang, "welcome", username=html.escape(context.bot.username)),
+        parse_mode="HTML",
     )
 
 
@@ -219,6 +222,10 @@ async def ttt_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Entry point
 # --------------------------------------------------------------------------- #
 
+async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE):
+    logger.error("Unhandled exception while processing an update", exc_info=context.error)
+
+
 def main():
     if not config.TELEGRAM_BOT_TOKEN:
         raise SystemExit("TELEGRAM_BOT_TOKEN is not set. Copy .env.example to .env and fill it in.")
@@ -231,6 +238,7 @@ def main():
     app.add_handler(InlineQueryHandler(inline_query))
     app.add_handler(ChosenInlineResultHandler(chosen_inline_result))
     app.add_handler(CallbackQueryHandler(ttt_callback, pattern=r"^ttt:"))
+    app.add_error_handler(on_error)
 
     logger.info("Bot starting...")
     app.run_polling()

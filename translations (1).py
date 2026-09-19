@@ -15,7 +15,7 @@ TRANSLATIONS = {
         "choose_language": "\U0001F310 Choose your language:",
         "welcome": (
             "Hey! I'm a games bot.\n\n"
-            "Type my username (@{username}) in *any* chat \u2014 even a DM with a "
+            "Type my username (@{username}) in <b>any</b> chat \u2014 even a DM with a "
             "friend \u2014 to start a game of tic-tac-toe, vs them or vs an "
             "unbeatable bot.\n\n"
             "Change your language anytime with /language."
@@ -30,7 +30,7 @@ TRANSLATIONS = {
         "choose_language": "\U0001F310 \u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u044F\u0437\u044B\u043A:",
         "welcome": (
             "\u041F\u0440\u0438\u0432\u0435\u0442! \u042F \u0431\u043E\u0442 \u0434\u043B\u044F \u0438\u0433\u0440.\n\n"
-            "\u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043C\u043E\u0439 \u044E\u0437\u0435\u0440\u043D\u0435\u0439\u043C (@{username}) \u0432 *\u043B\u044E\u0431\u043E\u043C* "
+            "\u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043C\u043E\u0439 \u044E\u0437\u0435\u0440\u043D\u0435\u0439\u043C (@{username}) \u0432 <b>\u043B\u044E\u0431\u043E\u043C</b> "
             "\u0447\u0430\u0442\u0435 \u2014 \u0434\u0430\u0436\u0435 \u0432 \u043B\u0438\u0447\u043A\u0435 \u0441 \u0434\u0440\u0443\u0433\u043E\u043C \u2014 \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0447\u0430\u0442\u044C \u0438\u0433\u0440\u0443 "
             "\u0432 \u043A\u0440\u0435\u0441\u0442\u0438\u043A\u0438-\u043D\u043E\u043B\u0438\u043A\u0438, \u043F\u0440\u043E\u0442\u0438\u0432 \u043D\u0435\u0433\u043E \u0438\u043B\u0438 \u043F\u0440\u043E\u0442\u0438\u0432 \u043D\u0435\u043F\u043E\u0431\u0435\u0434\u0438\u043C\u043E\u0433\u043E "
             "\u0431\u043E\u0442\u0430.\n\n"
@@ -46,7 +46,7 @@ TRANSLATIONS = {
         "choose_language": "\U0001F310 Tilni tanlang:",
         "welcome": (
             "Salom! Men o'yinlar boti man.\n\n"
-            "*Har qanday* chatda \u2014 hatto do'stingiz bilan shaxsiy yozishmada ham \u2014 "
+            "<b>Har qanday</b> chatda \u2014 hatto do'stingiz bilan shaxsiy yozishmada ham \u2014 "
             "mening usernamemni (@{username}) yozing va krestik-nolik o'yinini boshlang, "
             "do'stingizga yoki yengilmas botga qarshi.\n\n"
             "Tilni istalgan vaqtda /language buyrug'i bilan almashtirishingiz mumkin."
